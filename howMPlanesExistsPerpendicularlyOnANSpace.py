@@ -1,4 +1,5 @@
 from itertools import combinations
+import string
 import numpy as np
 dimension = 7
 planeDimension = 3
@@ -101,12 +102,55 @@ def dimensionalTable(planeDimension, dimension):
             shape.append(len(i))
         return shape
 
-    table = np.empty(getShape(axis))
+    table = np.chararray(getShape(axis),planeDimension*3-1)
     
-    def combinar(table,axis,count):
-        pass
+    def checkAllAxis(table, coordenadas):
+        def column(table,coordenadas,index):
+            while True:
+                cSet = [0 for _ in coordenadas]
+                change = False
+                if coordenadas[index] < table.shape[index]:
+                    if index > 0:
+                        if coordenadas[index-1] == dimension:
+                            current = index
+                            while current > 0:
+                                current -= 1
+                                coordenadas[current] = 0
+                            coordenadas[index] += 1
+                            change = False
+                        else:
+                            current = index
+                            toSum = -planeDimension
+                            if change:
+                                while current > 0:
+                                    current -= 1
+                                    coordenadas[current] = 0
+                                    toSum = 0
+                            if coordenadas[index] < dimension:
+                                if index > toSum:
+                                    while coordenadas[toSum] >= dimension:
+                                        toSum += 1
+                                    coordenadas[toSum] += 1
+                    else:
+                        if not coordenadas[index + 1] > 0:
+                            coordenadas[index] += 1 
+                else:
+                    if index+1 <= planeDimension:
+                        index += 1
+                        change = True
+                    else:
+                        break
+                """ cSet = tuple([i-1 for i in coordenadas])
+                print(cSet)
+                table[cSet] = str(",".join(["n"+str(i) for i in coordenadas])) """
+                print(coordenadas)
+        index = 0
+        column(table,coordenadas,index)
 
-    combinar(table,axis,[0 for _ in axis])
+    coordenadas = [0 for _ in axis]
+
+    checkAllAxis(table, coordenadas)
+
 
     return table
 
